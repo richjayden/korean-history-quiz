@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2C1810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="한국사 탐험대">
+<title>한국사 탐험대</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:#F0EAD6;min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:440px;background:#FEF9EF;min-height:100vh}
+.sc{display:none;flex-direction:column;min-height:100vh}.sc.on{display:flex}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes shk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+@keyframes slup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes fup{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-44px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn{padding:13px;border-radius:14px;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:transform .1s;letter-spacing:-.3px}
+.btn:active{transform:scale(.97)}
+.btn-g{background:linear-gradient(135deg,#F4A629,#E8900A);color:#2C1810;box-shadow:0 3px 12px rgba(244,166,41,.35)}
+.btn-d{background:#2C1810;color:#FDF0D5}
+.btn-gh{background:transparent;border:1.5px solid #D4C9A8;color:#8B7355}
+.hero{background:linear-gradient(160deg,#1A0F08 0%,#2C1810 45%,#4A2C1A 100%);padding:36px 20px 28px;text-align:center;color:white}
+.avG{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.avo{font-size:26px;padding:10px 4px;border-radius:10px;border:2px solid #E5D5B0;cursor:pointer;text-align:center;background:white;transition:all .15s}
+.avo.sel{border-color:#F4A629;transform:scale(1.08);background:#FFF8E1}
+.clG{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.clo{padding:10px;border-radius:14px;border:2px solid #E5D5B0;cursor:pointer;background:white;transition:all .15s}
+.clo.sel{border-color:#F4A629;background:#FFF8E1}
+input.nin{width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid #D4C9A8;font-size:16px;font-family:inherit;background:white;color:#2C1810;outline:none}
+input.nin:focus{border-color:#F4A629}
+.mhdr{background:linear-gradient(135deg,#2C1810,#4A2C1A);padding:12px 14px;color:white}
+.xpw{background:rgba(255,255,255,.2);border-radius:3px;height:4px;margin-top:5px}
+.xpf{height:100%;background:#F4A629;border-radius:3px;transition:width .6s}
+.ptb{background:#F4A629;color:#2C1810;padding:4px 11px;border-radius:999px;font-size:13px;font-weight:600}
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.ecard{border-radius:16px;padding:12px 10px;cursor:pointer;text-align:center;border:2.5px solid transparent;transition:transform .15s;user-select:none}
+.ecard:active{transform:scale(.95)}
+.mtabs{display:flex;background:#F0EAD6;border-radius:12px;padding:3px;margin:0 14px 12px}
+.mtab{flex:1;padding:8px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#8B7355;transition:all .15s}
+.mtab.on{background:white;color:#2C1810;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.stcard{margin:0 14px 8px;padding:12px 14px;border-radius:14px;border:2px solid #E5D5B0;background:white;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
+.stcard:active{transform:scale(.98)}
+.stcard.passed{border-color:#4CAF50;background:#F1F8F1}
+.stcard.available{border-color:#F4A629;background:#FFFCF2}
+.stcard.locked{opacity:.5;cursor:not-allowed}
+.stcard.failed{border-color:#E53935;background:#FFF5F5}
+.qhdr{background:linear-gradient(135deg,#2C1810,#3A1F10);padding:10px 14px;color:white;display:flex;align-items:center;gap:8px}
+.cbdg{background:#F4A629;color:#2C1810;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;margin-left:auto;animation:pls .8s infinite}
+.pdots{display:flex;gap:5px;padding:10px 14px 0}
+.pdot{height:6px;flex:1;border-radius:3px;background:#E5D5B0;transition:background .3s}
+.pdot.r{background:#4CAF50}.pdot.w{background:#E53935}.pdot.c{background:#F4A629}
+.qcard{margin:10px 14px 0;background:white;border-radius:16px;padding:16px;border:1.5px solid #E5D5B0;min-height:80px}
+.hbox{margin:6px 14px 0;padding:10px 12px;background:#FFF8E1;border:1.5px dashed #F4A629;border-radius:10px;font-size:13px;color:#8B6914;display:none;animation:slup .2s;line-height:1.6}
+.hbox.on{display:block}
+.olist{padding:8px 14px 0;display:flex;flex-direction:column;gap:7px}
+.obtn{width:100%;text-align:left;padding:12px 14px;background:white;border:1.5px solid #D4C9A8;border-radius:14px;font-size:14px;cursor:pointer;color:#2C1810;font-family:inherit;line-height:1.4;transition:border-color .1s}
+.obtn:hover:not(:disabled){border-color:#F4A629;background:#FFFCF5}
+.obtn.ok{background:#E8F5E9;border-color:#4CAF50;color:#1B5E20}
+.obtn.bad{background:#FFEBEE;border-color:#E53935;color:#B71C1C;animation:shk .4s}
+.obtn.rv{background:#E8F5E9;border-color:#4CAF50;color:#1B5E20}
+.obtn:disabled{cursor:not-allowed}
+.fbox{margin:8px 14px 0;padding:12px 14px;border-radius:14px;font-size:13px;line-height:1.55;display:none;animation:slup .2s}
+.fbox.on{display:block}
+.fbox.ok{background:#E8F5E9;border:1.5px solid #A5D6A7;color:#1B5E20}
+.fbox.bad{background:#FFEBEE;border:1.5px solid #FFCDD2;color:#B71C1C}
+.rsband{margin:0 0 10px;padding:12px 16px;border-radius:14px;text-align:center;font-size:14px;font-weight:600}
+.rsband.pass{background:#E8F5E9;color:#1B5E20;border:1.5px solid #A5D6A7}
+.rsband.fail{background:#FFEBEE;color:#B71C1C;border:1.5px solid #FFCDD2}
+.wncard{margin:0 14px 8px;padding:12px 14px;background:white;border-radius:14px;border:1.5px solid #E5D5B0}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;display:none;align-items:center;justify-content:center}
+.ov.on{display:flex}
+.ovc{background:#FEF9EF;border-radius:22px;padding:28px 22px;text-align:center;max-width:280px;width:90%;animation:pop .4s}
+.ptp{position:fixed;font-size:19px;font-weight:600;color:#E8900A;pointer-events:none;z-index:999;animation:fup .9s ease forwards}
+.ldspn{width:52px;height:52px;border:4px solid #E5D5B0;border-top-color:#F4A629;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+.sbar{background:white;border-radius:14px;margin:0 12px;padding:10px 14px;border:1.5px solid #E5D5B0;display:flex}
+.sitem{flex:1;text-align:center}.sdv{width:1px;background:#E5D5B0;margin:2px 0}
+::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="ov" id="lvOv"><div class="ovc">
+  <div style="font-size:52px;margin-bottom:8px">⭐</div>
+  <p style="font-size:19px;font-weight:600;color:#2C1810;margin-bottom:4px">레벨 업!</p>
+  <p id="lvTx" style="font-size:14px;color:#8B7355;margin-bottom:16px"></p>
+  <button class="btn btn-g" onclick="co('lvOv')" style="width:110px;padding:10px">야호!</button>
+</div></div>
+<div class="ov" id="titleOv"><div class="ovc">
+  <div style="font-size:52px;margin-bottom:8px">🏅</div>
+  <p style="font-size:13px;color:#8B7355;margin-bottom:4px">새 칭호 획득!</p>
+  <p id="titleTx" style="font-size:20px;font-weight:700;color:#2C1810;margin-bottom:16px"></p>
+  <button class="btn btn-g" onclick="co('titleOv')" style="width:120px;padding:10px">자랑스러워!</button>
+</div></div>
+<div class="ov" id="bdOv"><div class="ovc">
+  <div id="bdIco" style="font-size:52px;margin-bottom:8px">🏅</div>
+  <p style="font-size:19px;font-weight:600;color:#2C1810;margin-bottom:4px">뱃지 획득!</p>
+  <p id="bdTx" style="font-size:14px;color:#8B7355;margin-bottom:16px"></p>
+  <button class="btn btn-g" onclick="co('bdOv')" style="width:110px;padding:10px">획득!</button>
+</div></div>
+
+<!-- WELCOME -->
+<div class="sc" id="sc-welcome">
+  <div class="hero">
+    <div style="animation:bnc 2.5s infinite;display:inline-block;margin-bottom:10px">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 76" width="90" height="86">
+        <rect x="2" y="67" width="76" height="9" rx="1.5" fill="#9B8B6B"/>
+        <rect x="8" y="62" width="64" height="7" rx="1" fill="#B5A47C"/>
+        <rect x="10" y="42" width="5" height="22" rx="1" fill="#C0392B"/>
+        <rect x="34" y="42" width="5" height="22" rx="1" fill="#C0392B"/>
+        <rect x="41" y="42" width="5" height="22" rx="1" fill="#C0392B"/>
+        <rect x="65" y="42" width="5" height="22" rx="1" fill="#C0392B"/>
+        <rect x="34" y="48" width="12" height="16" rx="1" fill="#2C1810"/>
+        <rect x="34" y="48" width="5.5" height="16" rx="1" fill="#1A0F08"/>
+        <rect x="15" y="44" width="19" height="20" fill="#D4A96A" opacity=".8"/>
+        <rect x="46" y="44" width="19" height="20" fill="#D4A96A" opacity=".8"/>
+        <rect x="8" y="38" width="64" height="6" fill="#1A5276"/>
+        <circle cx="17" cy="41" r="2" fill="#E74C3C"/>
+        <circle cx="25" cy="41" r="2" fill="#27AE60"/>
+        <circle cx="33" cy="41" r="2" fill="#F0A500"/>
+        <circle cx="47" cy="41" r="2" fill="#E74C3C"/>
+        <circle cx="55" cy="41" r="2" fill="#27AE60"/>
+        <circle cx="63" cy="41" r="2" fill="#F0A500"/>
+        <path d="M0,41 L4,33 L40,22 L76,33 L80,41 L76,43 L40,25 L4,43 Z" fill="#2C3E50"/>
+        <rect x="18" y="14" width="44" height="10" fill="#C0392B"/>
+        <rect x="20" y="14" width="4" height="10" rx="1" fill="#A93226"/>
+        <rect x="56" y="14" width="4" height="10" rx="1" fill="#A93226"/>
+        <rect x="16" y="10" width="48" height="5" fill="#1A5276"/>
+        <circle cx="28" cy="12" r="1.5" fill="#E74C3C"/>
+        <circle cx="36" cy="12" r="1.5" fill="#27AE60"/>
+        <circle cx="44" cy="12" r="1.5" fill="#F0A500"/>
+        <circle cx="52" cy="12" r="1.5" fill="#E74C3C"/>
+        <path d="M12,12 L17,6 L40,0 L63,6 L68,12 L65,14 L40,2 L15,14 Z" fill="#2C3E50"/>
+        <circle cx="40" cy="0" r="2.5" fill="#F0A500"/>
+        <circle cx="17" cy="6" r="1.8" fill="#F0A500"/>
+        <circle cx="63" cy="6" r="1.8" fill="#F0A500"/>
+      </svg>
+    </div>
+    <p style="font-size:24px;font-weight:700;margin:0 0 4px;letter-spacing:-.5px">한국사 탐험대</p>
+    <p style="font-size:13px;opacity:.75">AI가 매번 새로운 문제를 만들어드려요!</p>
+    <p style="font-size:10px;opacity:.4;margin-top:4px">📱 Safari → 공유 → 홈 화면에 추가하면 앱처럼 사용</p>
+  </div>
+  <div id="retU" style="display:none;padding:14px">
+    <div id="retC" style="background:white;border-radius:16px;padding:14px;border:1.5px solid #E5D5B0;display:flex;align-items:center;gap:12px;margin-bottom:10px"></div>
+    <button class="btn btn-g" onclick="goMap()" style="margin-bottom:8px">🧭 이어서 탐험하기</button>
+    <p style="font-size:11px;color:#8B7355;text-align:center;margin-bottom:8px">💾 포인트·별·칭호 자동 저장됨</p>
+    <button class="btn btn-gh" onclick="showNF()">새 캐릭터 만들기</button>
+  </div>
+  <div id="newF" style="padding:14px">
+    <div style="margin-bottom:14px">
+      <p style="font-size:12px;font-weight:600;color:#8B7355;margin-bottom:8px">캐릭터 선택</p>
+      <div class="avG" id="avG"></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <p style="font-size:12px;font-weight:600;color:#8B7355;margin-bottom:8px">직업 선택</p>
+      <div class="clG" id="clG"></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <p style="font-size:12px;font-weight:600;color:#8B7355;margin-bottom:8px">탐험가 이름</p>
+      <input class="nin" id="nin" placeholder="이름 입력 (최대 8자)" maxlength="8">
+    </div>
+    <button class="btn btn-g" onclick="createChar()">탐험 시작! 🚀</button>
+  </div>
+</div>
+
+<!-- MAP -->
+<div class="sc" id="sc-map">
+  <div class="mhdr">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="mAv" style="font-size:34px"></span>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span id="mNm" style="font-size:14px;font-weight:600;color:white"></span>
+          <span id="mLv" style="background:rgba(255,255,255,.2);color:white;font-size:11px;padding:1px 8px;border-radius:999px"></span>
+          <span id="mTitle" style="display:none;background:#F4A629;color:#2C1810;font-size:10px;padding:1px 7px;border-radius:999px;font-weight:600"></span>
+        </div>
+        <div class="xpw"><div class="xpf" id="mXp" style="width:0%"></div></div>
+      </div>
+      <div class="ptb">💎 <span id="mPts">0</span></div>
+    </div>
+  </div>
+  <div style="padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <p style="font-size:17px;font-weight:700;color:#2C1810">🗺️ 한국사 탐험 지도</p>
+      <p style="font-size:12px;color:#8B7355;margin-top:1px">시대를 선택해 탐험하세요!</p>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button onclick="shareApp()" style="background:#E8F5FB;border:1.5px solid #85C1E9;border-radius:10px;padding:6px 10px;font-size:12px;color:#1F618D;font-family:inherit;cursor:pointer;font-weight:600">🔗 공유</button>
+      <button onclick="showLB()" style="background:#F0EAF8;border:1.5px solid #C39BD3;border-radius:10px;padding:6px 10px;font-size:12px;color:#7D3C98;font-family:inherit;cursor:pointer;font-weight:600">🏆 랭킹</button>
+      <button onclick="showWrong()" style="background:#FFF8E1;border:1.5px solid #F4A629;border-radius:10px;padding:6px 10px;font-size:12px;color:#8B6914;font-family:inherit;cursor:pointer;font-weight:600">📝 오답</button>
+    </div>
+  </div>
+  <div class="egrid" id="eraG"></div>
+  <div style="padding:0 12px 20px">
+    <div class="sbar">
+      <div class="sitem"><p style="font-size:18px;font-weight:600;color:#2C1810" id="sP">0</p><p style="font-size:11px;color:#8B7355">포인트</p></div>
+      <div class="sdv"></div>
+      <div class="sitem"><p style="font-size:18px;font-weight:600;color:#2C1810" id="sS">0</p><p style="font-size:11px;color:#8B7355">별</p></div>
+      <div class="sdv"></div>
+      <div class="sitem"><p style="font-size:18px;font-weight:600;color:#2C1810" id="sTl">0</p><p style="font-size:11px;color:#8B7355">칭호</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ERA -->
+<div class="sc" id="sc-era">
+  <div style="display:flex;align-items:center;padding:10px 14px;gap:8px;background:white;border-bottom:1px solid #F0EAD6">
+    <button onclick="goMap()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;color:#2C1810;line-height:1">←</button>
+    <p style="font-size:16px;font-weight:600;color:#2C1810" id="eT"></p>
+  </div>
+  <div id="eH" style="padding:16px 16px 10px;text-align:center"></div>
+  <div class="mtabs">
+    <button class="mtab on" id="tabFree" onclick="switchMode('free')">🗺️ 자유 탐험</button>
+    <button class="mtab" id="tabStage" onclick="switchMode('stage')">⚔️ 관문 도전</button>
+  </div>
+  <div id="freeMode" style="padding:0 14px 20px">
+    <p style="font-size:12px;font-weight:600;color:#8B7355;margin-bottom:8px">난이도 선택</p>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button data-d="1" onclick="selD(this)" style="flex:1;padding:9px;border-radius:10px;border:2px solid #F4A629;background:#FFF8E1;font-size:13px;font-weight:600;color:#2C1810;font-family:inherit;cursor:pointer">🌱 초급</button>
+      <button data-d="2" onclick="selD(this)" style="flex:1;padding:9px;border-radius:10px;border:2px solid #E5D5B0;background:white;font-size:13px;font-weight:500;color:#2C1810;font-family:inherit;cursor:pointer">🌿 중급</button>
+      <button data-d="3" onclick="selD(this)" style="flex:1;padding:9px;border-radius:10px;border:2px solid #E5D5B0;background:white;font-size:13px;font-weight:500;color:#2C1810;font-family:inherit;cursor:pointer">🌳 고급</button>
+    </div>
+    <div id="ddesc" style="padding:8px 12px;background:#FFF8E1;border-radius:10px;font-size:12px;color:#8B6914;margin-bottom:10px;line-height:1.5"></div>
+    <button class="btn btn-g" onclick="startQuiz('free')">자유 탐험 시작! 🗺️</button>
+  </div>
+  <div id="stageMode" style="display:none;padding-bottom:20px">
+    <div id="stageCards"></div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="sc" id="sc-loading" style="align-items:center;justify-content:center">
+  <div class="ldspn"></div>
+  <p id="ldM" style="font-size:16px;font-weight:500;color:#2C1810;text-align:center;padding:0 20px;margin-bottom:6px"></p>
+  <p style="font-size:13px;color:#8B7355">AI가 문제를 만들고 있어요 ✨</p>
+</div>
+
+<!-- QUIZ -->
+<div class="sc" id="sc-quiz">
+  <div class="qhdr">
+    <span id="qEI" style="font-size:18px"></span>
+    <span id="qEN" style="font-size:13px;color:rgba(255,255,255,.9)"></span>
+    <span id="qSt" style="font-size:11px;color:rgba(255,255,255,.6);margin-left:2px"></span>
+    <span class="cbdg" id="cbdg" style="display:none"></span>
+  </div>
+  <div class="pdots" id="prDots"></div>
+  <div style="padding:6px 14px 2px;display:flex;align-items:center;justify-content:space-between">
+    <p style="font-size:11px;color:#8B7355;font-weight:600" id="qNum"></p>
+    <p id="passTgt" style="font-size:11px;color:#8B7355"></p>
+  </div>
+  <div class="qcard"><p style="font-size:15px;line-height:1.7;color:#2C1810;letter-spacing:-.3px" id="qTxt"></p></div>
+  <div style="padding:6px 14px 2px">
+    <button id="h1" onclick="useH()" style="padding:6px 14px;background:white;border:1.5px solid #D4C9A8;border-radius:999px;font-size:12px;cursor:pointer;color:#8B7355;font-family:inherit">💡 단서 보기</button>
+  </div>
+  <div class="hbox" id="hbox"></div>
+  <div class="olist" id="olist"></div>
+  <div class="fbox" id="fbox"></div>
+  <div style="padding:10px 14px 20px">
+    <button class="btn btn-g" id="nxBtn" style="display:none" onclick="nextQ()">다음 문제 →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="sc" id="sc-result" style="align-items:center">
+  <div style="width:100%;padding:20px 16px;text-align:center">
+    <div id="rCh" style="font-size:64px;animation:bnc 1s infinite;display:inline-block;margin-bottom:8px">🎁</div>
+    <p id="rEra" style="font-size:12px;color:#8B7355;margin-bottom:4px"></p>
+    <p id="rSc" style="font-size:44px;font-weight:700;color:#2C1810;letter-spacing:-1px"></p>
+    <div id="rSt" style="display:flex;justify-content:center;gap:8px;font-size:28px;margin:6px 0 4px"></div>
+    <p id="rPts" style="font-size:20px;color:#C78210;font-weight:600;margin-bottom:12px"></p>
+    <div id="rStage" style="display:none;margin-bottom:10px"></div>
+    <div id="rBk" style="background:white;border-radius:14px;padding:13px 15px;border:1.5px solid #E5D5B0;font-size:13px;color:#8B7355;text-align:left;line-height:1.9;margin-bottom:8px"></div>
+    <div id="rLv" style="display:none;background:#FFF8E1;border-radius:14px;padding:10px 14px;border:1.5px solid #F4A629;font-size:13px;color:#8B6914;margin-bottom:8px"></div>
+    <div id="rBd" style="display:none;background:#EBF5FB;border-radius:14px;padding:10px 14px;border:1.5px solid #85C1E9;font-size:13px;color:#1F618D;margin-bottom:10px"></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-g" id="rtBtn">같은 조건 다시 도전 🔄</button>
+      <button class="btn btn-d" onclick="goMap()">탐험 지도로 🗺️</button>
+      <button class="btn btn-gh" onclick="registerAndShare()">📊 랭킹에 내 점수 올리기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 오답노트 -->
+<div class="sc" id="sc-wrongnote">
+  <div style="display:flex;align-items:center;padding:10px 14px;gap:8px;background:white;border-bottom:1px solid #F0EAD6">
+    <button onclick="goMap()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;color:#2C1810;line-height:1">←</button>
+    <p style="font-size:16px;font-weight:600;color:#2C1810">📝 오답 노트</p>
+  </div>
+  <div style="padding:12px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <p style="font-size:13px;color:#8B7355">틀렸던 문제를 복습해요</p>
+    <button onclick="clearWrong()" style="background:none;border:none;font-size:12px;color:#E53935;cursor:pointer;font-family:inherit">전체 삭제</button>
+  </div>
+  <div id="wrongList" style="padding:0 0 20px"></div>
+</div>
+
+<!-- 랭킹 -->
+<div class="sc" id="sc-lb">
+  <div style="display:flex;align-items:center;padding:10px 14px;gap:8px;background:white;border-bottom:1px solid #F0EAD6">
+    <button onclick="goMap()" style="background:none;border:none;font-size:24px;cursor:pointer;padding:0;color:#2C1810;line-height:1">←</button>
+    <p style="font-size:16px;font-weight:600;color:#2C1810">🏆 탐험대 랭킹</p>
+  </div>
+  <div style="padding:10px 14px 4px;display:flex;justify-content:space-between;align-items:center">
+    <p style="font-size:12px;color:#8B7355">칭호·별·레벨 기준 종합 순위</p>
+    <button onclick="clearLB()" style="background:none;border:none;font-size:11px;color:#E53935;cursor:pointer;font-family:inherit">초기화</button>
+  </div>
+  <div id="lbList" style="padding:0 0 20px"></div>
+  <div style="padding:0 14px 20px">
+    <div style="background:#FFF8E1;border-radius:14px;padding:12px 14px;border:1.5px dashed #F4A629;font-size:12px;color:#8B6914;line-height:1.7">
+      💡 <strong>랭킹 등록 방법</strong><br>
+      퀴즈 결과 화면 → "랭킹에 내 점수 올리기" 클릭<br>
+      친구에게 공유할 땐 🔗 공유 버튼으로 앱 링크를 보내주세요!
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const ERAS=[
+  {id:'gojoseon',n:'고조선',p:'기원전 2333년~',ic:'🪨',c:'#7D5A2C',bg:'#FDF0D5',mk:'단군왕검',d:'우리 민족 최초의 나라! 단군왕검이 세웠어요'},
+  {id:'samguk',n:'삼국시대',p:'기원전 57~668년',ic:'⚔️',c:'#B03A2E',bg:'#FDEDEC',mk:'광개토대왕',d:'고구려·백제·신라 세 나라의 치열한 대결!'},
+  {id:'unified',n:'통일신라',p:'668~935년',ic:'🏯',c:'#7D3C98',bg:'#F5EEF8',mk:'원효·장보고',d:'삼국을 통일하고 찬란한 불교 문화가 꽃핀 시대'},
+  {id:'goryeo',n:'고려',p:'918~1392년',ic:'📜',c:'#1E8449',bg:'#EAFAF1',mk:'팔만대장경',d:'세계 최초 금속활자와 아름다운 고려청자의 나라'},
+  {id:'joseon',n:'조선',p:'1392~1897년',ic:'👑',c:'#1F618D',bg:'#EBF5FB',mk:'세종·정조',d:'한글을 만든 세종대왕과 500년을 이어온 조선'},
+  {id:'daehan',n:'대한제국',p:'1897~1910년',ic:'🎖️',c:'#D35400',bg:'#FEF5E7',mk:'고종황제',d:'근대화를 위해 노력한 대한제국의 역사'},
+  {id:'iljeong',n:'일제강점기',p:'1910~1945년',ic:'🕯️',c:'#5D6D7E',bg:'#F0F3F4',mk:'유관순·안중근',d:'독립을 위해 싸운 영웅들의 뜨거운 이야기'},
+  {id:'modern',n:'근현대',p:'1945년~현재',ic:'🇰🇷',c:'#CB4335',bg:'#FDEDEC',mk:'한강의 기적',d:'전쟁 후 기적을 만들어낸 자랑스러운 대한민국'},
+];
+const ERA_TITLES=['단군의 후예','삼국의 영웅','화랑의 기상','팔만의 지혜','집현전 학사','광무의 개혁가','독립의 불꽃','한강의 기적'];
+const CLASSES=[
+  {id:'explorer',n:'탐험가',ic:'🧭',b:'힌트 사용 포인트 손실 없음'},
+  {id:'scholar',n:'학자',ic:'📚',b:'해설을 더 자세히 봐요'},
+  {id:'warrior',n:'화랑',ic:'⚔️',b:'콤보 보너스 1.5배!'},
+  {id:'artisan',n:'장인',ic:'🏺',b:'포인트 20% 추가!'},
+];
+const AVTS=['🧒','🤴','👸','🧙','🦸','🐉','🦊','🐯','🏹','⚔️','🌟','🔥'];
+const LEVELS=[{m:0,n:'새싹 역사가',ic:'🌱'},{m:80,n:'역사 탐험가',ic:'🧭'},{m:220,n:'역사 학자',ic:'📚'},{m:450,n:'역사 박사',ic:'🎓'},{m:800,n:'역사 마스터',ic:'🏆'},{m:1200,n:'역사의 신',ic:'⚡'}];
+const DFD={1:'초등 저학년 · 핵심 인물과 사건',2:'초등 고학년·중학 · 제도·배경·연도',3:'한국사검정 심화 · 인과관계·역사적 평가'};
+const DFG={1:'초등 1~3학년 수준. 핵심 인물, 유물, 사건. 보기를 명확하게.',2:'초등 4~6학년 수준. 사건 배경, 연도, 제도 포함.',3:'중학생 이상. 인과관계, 역사적 의의, 제도 심층 분석.'};
+const SNAMES=['','수련','탐험','달인'];
+const SDIFF=['','🌱 초급','🌿 중급','🌳 고급'];
+const PSCORE={1:7,2:7,3:8};
+
+let gC=null,gQ=null,gEra=null,gDiff=1,gAv=AVTS[0],gCl='explorer';
+let gHints=[false],gLdI=null,gMode='free',gStage=1;
+
+function getHist(eid){try{return JSON.parse(localStorage.getItem('hh_'+eid)||'[]');}catch(e){return [];}}
+function addHist(eid,qs){try{const h=getHist(eid);const n=[...h,...qs.map(q=>q.q.slice(0,30).replace(/[,\/]/g,''))].slice(-80);localStorage.setItem('hh_'+eid,JSON.stringify(n));}catch(e){}}
+function sv(){try{localStorage.setItem('hqai',JSON.stringify(gC));}catch(e){}}
+function ld(){try{const d=localStorage.getItem('hqai');if(d){gC=JSON.parse(d);return true;}}catch(e){}return false;}
+function initStages(){const s={};ERAS.forEach(e=>{s[e.id]={1:'available',2:'locked',3:'locked'};});return s;}
+
+
+// ===== 공유 =====
+function shareApp(){
+  const url=window.location.href.split('?')[0].split('#')[0];
+  const txt=`🏛️ 한국사 탐험대\n${gC?gC.nm+'님이 도전 중! ':' '}역사 퀴즈 앱이에요!\n\n${url}`;
+  if(navigator.share){navigator.share({title:'한국사 탐험대',text:txt,url:url}).catch(()=>{});}
+  else{navigator.clipboard?.writeText(url).then(()=>alert('링크 복사됐어요! 친구에게 붙여넣어 보내주세요 😊')).catch(()=>alert('주소: '+url));}
+}
+
+// ===== 랭킹 =====
+function getLB(){try{return JSON.parse(localStorage.getItem('hq_lb')||'[]');}catch(e){return [];}}
+function saveLB(d){try{localStorage.setItem('hq_lb',JSON.stringify(d));}catch(e){}}
+function lbScore(e){return (e.titles?.length||0)*100 + (e.stars||0)*10 + Math.floor((e.pts||0)/10);}
+
+function registerAndShare(){
+  if(!gC)return;
+  const entry={
+    name:gC.nm, av:gC.av,
+    cl_ic:CLASSES.find(c=>c.id===gC.cl)?.ic||'',
+    pts:gC.pts||0,
+    lvl:lvI(gC.xp||0)+1,
+    lv_n:getLv(gC.xp||0).n,
+    titles:Object.values(gC.titles||{}),
+    stars:Object.values(gC.eS||{}).reduce((a,b)=>a+b,0),
+    ts:Date.now()
+  };
+  const lb=getLB().filter(e=>e.name!==entry.name);
+  lb.push(entry);lb.sort((a,b)=>lbScore(b)-lbScore(a));
+  saveLB(lb.slice(0,20));
+  // 공유 링크
+  const url=window.location.href.split('?')[0].split('#')[0];
+  const encoded=btoa(encodeURIComponent(JSON.stringify(entry)));
+  const shareUrl=url+'#score='+encoded;
+  const txt=`🏛️ 한국사 탐험대 내 기록\n탐험가: ${entry.av} ${entry.name}\n레벨: ${entry.lv_n}\n칭호: ${entry.titles.length>0?entry.titles.join(', '):'아직 획득 전'}\n별: ${'⭐'.repeat(Math.min(entry.stars,5))} (${entry.stars}개)\n포인트: ${entry.pts}점\n\n같이 해봐요! ${url}`;
+  if(navigator.share){navigator.share({title:'한국사 탐험대 랭킹',text:txt,url:url}).catch(()=>{});}
+  else{navigator.clipboard?.writeText(txt).then(()=>alert('내 점수가 복사됐어요!\n카카오톡에 붙여넣어 공유해보세요 😊')).catch(()=>{});}
+  showLB();
+}
+
+function showLB(){
+  const lb=getLB();
+  const list=document.getElementById('lbList');
+  if(lb.length===0){
+    list.innerHTML='<p style="text-align:center;padding:40px 20px;color:#8B7355;font-size:14px">아직 등록된 점수가 없어요!<br>퀴즈 결과 화면에서 등록해보세요 🏆</p>';
+  } else {
+    const medals=['🥇','🥈','🥉'];
+    list.innerHTML=lb.map((e,i)=>{
+      const isMe=gC&&e.name===gC.name&&e.av===gC.av;
+      return `<div style="margin:0 14px 8px;padding:12px 14px;background:${isMe?'#FFF8E1':'white'};border-radius:14px;border:${isMe?'2px solid #F4A629':'1.5px solid #E5D5B0'};display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px;width:28px;text-align:center">${medals[i]||'  '+(i+1)}</span>
+        <span style="font-size:28px">${e.av}</span>
+        <div style="flex:1">
+          <p style="font-size:14px;font-weight:700;color:#2C1810">${e.name} ${e.cl_ic}</p>
+          <p style="font-size:11px;color:#8B7355">${e.lv_n} · ⭐${e.stars}개 · 💎${e.pts}점</p>
+          ${e.titles?.length>0?`<p style="font-size:11px;color:#C78210;font-weight:600">🏅 ${e.titles[e.titles.length-1]}</p>`:''}
+        </div>
+        ${isMe?'<span style="font-size:11px;color:#C78210;font-weight:600">나</span>':''}
+      </div>`;
+    }).join('');
+  }
+  show('sc-lb');
+}
+
+function clearLB(){
+  if(!confirm('랭킹을 초기화할까요?'))return;
+  saveLB([]);showLB();
+}
+
+// URL 해시에서 점수 불러오기 (친구가 공유한 링크 접속 시)
+function checkSharedScore(){
+  const hash=window.location.hash;
+  if(!hash.startsWith('#score='))return;
+  try{
+    const entry=JSON.parse(decodeURIComponent(atob(hash.slice(7))));
+    if(entry?.name&&entry?.pts>=0){
+      const lb=getLB().filter(e=>e.name!==entry.name);
+      lb.push(entry);lb.sort((a,b)=>lbScore(b)-lbScore(a));
+      saveLB(lb.slice(0,20));
+      history.replaceState(null,'',window.location.pathname);
+      setTimeout(()=>alert(`🏆 ${entry.name}님의 점수가 랭킹에 추가됐어요!`),500);
+    }
+  }catch(e){}
+}
+
+function init(){
+  checkSharedScore();
+  buildAv();buildCl();
+  if(ld()&&gC){
+    if(!gC.stages)gC.stages=initStages();
+    if(!gC.titles)gC.titles={};
+    if(!gC.wrongQ)gC.wrongQ=[];
+    buildRet();
+    document.getElementById('retU').style.display='block';
+    document.getElementById('newF').style.display='none';
+  }
+  show('sc-welcome');
+}
+
+function buildRet(){
+  const lv=getLv(gC.xp||0);
+  const titles=Object.values(gC.titles||{});
+  document.getElementById('retC').innerHTML=`<span style="font-size:38px">${gC.av}</span><div><p style="font-size:15px;font-weight:600;color:#2C1810">${gC.nm} ${CLASSES.find(c=>c.id===gC.cl)?.ic||''}</p><p style="font-size:12px;color:#8B7355">${lv.ic} ${lv.n}</p>${titles.length>0?`<p style="font-size:11px;color:#C78210;font-weight:600">🏅 ${titles[titles.length-1]}</p>`:''}<p style="font-size:12px;color:#C78210;font-weight:500">💎 ${gC.pts||0} 포인트</p></div>`;
+}
+function showNF(){document.getElementById('retU').style.display='none';document.getElementById('newF').style.display='block';}
+
+function buildAv(){
+  const g=document.getElementById('avG');
+  AVTS.forEach((av,i)=>{
+    const d=document.createElement('div');d.className='avo'+(i===0?' sel':'');d.textContent=av;
+    d.onclick=()=>{document.querySelectorAll('.avo').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');gAv=av;};
+    g.appendChild(d);
+  });
+}
+function buildCl(){
+  const g=document.getElementById('clG');
+  CLASSES.forEach((cl,i)=>{
+    const d=document.createElement('div');d.className='clo'+(i===0?' sel':'');
+    d.innerHTML=`<div style="font-size:22px">${cl.ic}</div><p style="font-size:13px;font-weight:600;color:#2C1810;margin-top:2px">${cl.n}</p><p style="font-size:11px;color:#8B7355;margin-top:1px">✨ ${cl.b}</p>`;
+    d.onclick=()=>{document.querySelectorAll('.clo').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');gCl=cl.id;};
+    g.appendChild(d);
+  });
+}
+function createChar(){
+  const nm=document.getElementById('nin').value.trim();
+  if(!nm){alert('이름을 입력해주세요!');return;}
+  gC={nm,av:gAv,cl:gCl,xp:0,pts:0,eS:{},bd:[],stages:initStages(),titles:{},wrongQ:[]};
+  sv();goMap();
+}
+
+function lvI(xp){let i=0;LEVELS.forEach((l,j)=>{if(xp>=l.m)i=j;});return i;}
+function getLv(xp){return LEVELS[lvI(xp)];}
+function xpP(xp){const i=lvI(xp);if(i>=LEVELS.length-1)return 100;return Math.round(((xp-LEVELS[i].m)/(LEVELS[i+1].m-LEVELS[i].m))*100);}
+
+function goMap(){
+  if(!gC)return;
+  if(!gC.stages)gC.stages=initStages();
+  if(!gC.titles)gC.titles={};
+  if(!gC.wrongQ)gC.wrongQ=[];
+  const lv=getLv(gC.xp||0);
+  document.getElementById('mAv').textContent=gC.av;
+  document.getElementById('mNm').textContent=gC.nm;
+  document.getElementById('mLv').textContent=lv.ic+' Lv.'+(lvI(gC.xp||0)+1);
+  document.getElementById('mXp').style.width=xpP(gC.xp||0)+'%';
+  document.getElementById('mPts').textContent=gC.pts||0;
+  const titles=Object.values(gC.titles||{});
+  const mTitle=document.getElementById('mTitle');
+  if(titles.length>0){mTitle.style.display='';mTitle.textContent='🏅 '+titles[titles.length-1];}else mTitle.style.display='none';
+  const ts=Object.values(gC.eS||{}).reduce((a,b)=>a+b,0);
+  document.getElementById('sP').textContent=gC.pts||0;
+  document.getElementById('sS').textContent=ts;
+  document.getElementById('sTl').textContent=titles.length;
+  buildEG();show('sc-map');
+}
+
+function buildEG(){
+  const g=document.getElementById('eraG');g.innerHTML='';
+  ERAS.forEach((era,ei)=>{
+    const s=gC?.eS?.[era.id]||0;
+    const stages=gC?.stages?.[era.id]||{1:'available',2:'locked',3:'locked'};
+    const passed=Object.values(stages).filter(v=>v==='passed').length;
+    const title=gC?.titles?.[era.id];
+    const d=document.createElement('div');d.className='ecard';
+    d.style.cssText=`background:${era.bg};border-color:${s>0?era.c:'transparent'}`;
+    d.innerHTML=`<div style="font-size:30px;margin-bottom:2px">${era.ic}</div>
+      <p style="font-size:13px;font-weight:700;color:${era.c}">${era.n}</p>
+      <p style="font-size:10px;color:#8B7355;margin-top:1px">${era.p}</p>
+      <p style="font-size:11px;margin-top:3px">${'⭐'.repeat(s)+'☆'.repeat(3-s)}</p>
+      ${title?`<p style="font-size:10px;color:#C78210;font-weight:700;margin-top:2px">🏅 ${title}</p>`:`<p style="font-size:10px;color:#B09070;margin-top:2px">관문 ${passed}/3</p>`}`;
+    d.onclick=()=>showEra(era);g.appendChild(d);
+  });
+}
+
+function showEra(era){
+  gEra=era;gDiff=1;gMode='free';
+  document.getElementById('eT').textContent=era.ic+' '+era.n;
+  const s=gC?.eS?.[era.id]||0;
+  const title=gC?.titles?.[era.id]||'';
+  document.getElementById('eH').innerHTML=`<div style="font-size:48px;margin-bottom:5px">${era.ic}</div>
+    <p style="font-size:19px;font-weight:700;color:${era.c}">${era.n}</p>
+    <p style="font-size:12px;color:#8B7355;margin-top:2px">${era.p}</p>
+    <p style="font-size:13px;color:#2C1810;margin-top:8px;line-height:1.6">${era.d}</p>
+    ${title?`<p style="font-size:13px;color:#C78210;font-weight:700;margin-top:6px">🏅 ${title}</p>`:''}
+    <p style="margin-top:6px;font-size:16px">${'⭐'.repeat(s)+'☆'.repeat(3-s)}</p>`;
+  document.getElementById('tabFree').className='mtab on';
+  document.getElementById('tabStage').className='mtab';
+  document.getElementById('freeMode').style.display='block';
+  document.getElementById('stageMode').style.display='none';
+  document.querySelectorAll('[data-d]').forEach(b=>{b.style.border=b.dataset.d==='1'?'2px solid #F4A629':'2px solid #E5D5B0';b.style.background=b.dataset.d==='1'?'#FFF8E1':'white';b.style.fontWeight=b.dataset.d==='1'?'600':'500';});
+  document.getElementById('ddesc').textContent=DFD[1];
+  show('sc-era');
+}
+
+function switchMode(mode){
+  gMode=mode;
+  document.getElementById('tabFree').className='mtab'+(mode==='free'?' on':'');
+  document.getElementById('tabStage').className='mtab'+(mode==='stage'?' on':'');
+  document.getElementById('freeMode').style.display=mode==='free'?'block':'none';
+  document.getElementById('stageMode').style.display=mode==='stage'?'block':'none';
+  if(mode==='stage')buildStageCards();
+}
+
+function buildStageCards(){
+  const stages=gC?.stages?.[gEra.id]||{1:'available',2:'locked',3:'locked'};
+  const c=document.getElementById('stageCards');c.innerHTML='';
+  for(let i=1;i<=3;i++){
+    const st=stages[i];
+    const icons={passed:'✅',available:'▶️',failed:'🔁',locked:'🔒'};
+    const labels={passed:'통과!',available:'도전!',failed:'재도전',locked:'잠금'};
+    const card=document.createElement('div');
+    card.className='stcard '+st;
+    card.innerHTML=`<div style="font-size:28px">${icons[st]}</div>
+      <div style="flex:1">
+        <p style="font-size:14px;font-weight:700;color:#2C1810">관문 ${i} — ${SNAMES[i]}</p>
+        <p style="font-size:12px;color:#8B7355">${SDIFF[i]} · ${PSCORE[i]}문제 이상 통과</p>
+      </div>
+      <span style="font-size:13px;font-weight:600;color:${(st==='available'||st==='failed')?'#C78210':'#8B7355'}">${labels[st]}</span>`;
+    if(st==='available'||st==='failed'){card.onclick=()=>{gStage=i;startQuiz('stage');};}
+    c.appendChild(card);
+  }
+  const ei=ERAS.findIndex(e=>e.id===gEra.id);
+  const hasTitle=gC?.titles?.[gEra.id];
+  const td=document.createElement('div');
+  td.style.cssText='margin:4px 14px 0;padding:10px 14px;background:#FFF8E1;border-radius:12px;font-size:12px;color:#8B6914;text-align:center;line-height:1.6';
+  td.innerHTML=hasTitle?`🏅 <strong>${hasTitle}</strong> 칭호 보유!`:`관문 3 달인 통과 시 <strong>"${ERA_TITLES[ei]}"</strong> 칭호 획득!`;
+  c.appendChild(td);
+}
+
+function selD(btn){
+  document.querySelectorAll('[data-d]').forEach(b=>{b.style.border='2px solid #E5D5B0';b.style.background='white';b.style.fontWeight='500';});
+  btn.style.border='2px solid #F4A629';btn.style.background='#FFF8E1';btn.style.fontWeight='600';
+  gDiff=parseInt(btn.dataset.d);
+  document.getElementById('ddesc').textContent=DFD[gDiff];
+}
+
+async function startQuiz(mode){
+  gMode=mode;
+  const diff=mode==='stage'?gStage:gDiff;
+  show('sc-loading');
+  const msgs=[gEra.ic+' 시간 여행 출발!','📜 역사 기록 탐색 중...','⚔️ '+gEra.n+' 문제 생성 중!','🌟 최고의 문제를 고르는 중...'];
+  let mi=0;document.getElementById('ldM').textContent=msgs[0];
+  gLdI=setInterval(()=>{mi=(mi+1)%msgs.length;document.getElementById('ldM').textContent=msgs[mi];},1600);
+  const hist=getHist(gEra.id);
+  const histStr=hist.length>0?`\n\n🚫 절대 금지 — 아래 주제 및 유사 주제 출제 불가: ${hist.slice(-25).join(' / ')}`:'';
+  const prompt=`당신은 한국사 퀴즈 전문 출제자입니다. 한국의 초등~중학생을 대상으로 합니다.
+${gEra.n}(${gEra.p}) 시대 4지선다 퀴즈 10문제를 만드세요.
+난이도: ${['','초급','중급','고급'][diff]} — ${DFG[diff]}${histStr}
+
+순수 JSON만 반환 (마크다운 없이, 해설 2문장 이내):
+{"questions":[{"q":"문제","o":["①보기1","②보기2","③보기3","④보기4"],"a":0,"ex":"해설(2문장 이내)","c":"정답 직접 언급 없이 강력히 암시하는 구체적 단서(관련 인물의 다른 업적/시대배경/연관사건 서술)"}]}
+
+규칙: ①②③④ 포함, answer 0~3, 인물/사건/유물/제도/문화 골고루 출제`;
+
+  try{
+    const res=await fetch('/api/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:3500,messages:[{role:'user',content:prompt}]})});
+    clearInterval(gLdI);
+    const data=await res.json();
+    if(!res.ok){throw new Error(data?.error?.message||data?.error||JSON.stringify(data));}
+    const txt=data.content.map(x=>x.text||'').join('');
+    const m=txt.match(/\{[\s\S]*\}/);
+    const parsed=JSON.parse(m?m[0]:txt);
+    gQ={qs:parsed.questions,idx:0,sc:0,combo:0,maxC:0,hN:0,ptsE:0,res:[],era:gEra,diff,mode,stage:gStage};
+    gHints=[false];renderQ();show('sc-quiz');
+  }catch(e){
+    clearInterval(gLdI);
+    alert('문제를 불러오지 못했어요.\n오류: '+e.message);
+    show('sc-era');
+  }
+}
+
+function renderQ(){
+  const q=gQ.qs[gQ.idx],tot=gQ.qs.length;
+  document.getElementById('qEI').textContent=gQ.era.ic;
+  document.getElementById('qEN').textContent=gQ.era.n;
+  document.getElementById('qSt').textContent=gQ.mode==='stage'?`· 관문${gQ.stage} ${SNAMES[gQ.stage]}`:`· ${['','초급','중급','고급'][gQ.diff]}`;
+  const cb=document.getElementById('cbdg');
+  if(gQ.combo>=2){cb.style.display='';cb.textContent='🔥 '+gQ.combo+'연속!';}else cb.style.display='none';
+  const pd=document.getElementById('prDots');pd.innerHTML='';
+  for(let i=0;i<tot;i++){const d=document.createElement('div');d.className='pdot'+(i<gQ.idx?(gQ.res[i]?' r':' w'):'')+(i===gQ.idx?' c':'');pd.appendChild(d);}
+  document.getElementById('qNum').textContent='문제 '+(gQ.idx+1)+' / '+tot;
+  document.getElementById('passTgt').textContent=gQ.mode==='stage'?`통과 조건: ${PSCORE[gQ.stage]}개 이상`:'';
+  document.getElementById('qTxt').textContent=q.q;
+  gHints=[false];
+  const h1=document.getElementById('h1');h1.style.opacity='1';h1.style.pointerEvents='auto';
+  document.getElementById('hbox').className='hbox';document.getElementById('hbox').innerHTML='';
+  const ol=document.getElementById('olist');ol.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');b.className='obtn';b.textContent=opt;
+    b.onclick=()=>pick(i);ol.appendChild(b);
+  });
+  document.getElementById('fbox').className='fbox';
+  document.getElementById('nxBtn').style.display='none';
+}
+
+function useH(){
+  if(gHints[0])return;
+  gHints[0]=true;
+  const h1=document.getElementById('h1');h1.style.opacity='.3';h1.style.pointerEvents='none';
+  gQ.hN++;
+  const q=gQ.qs[gQ.idx];
+  const hb=document.getElementById('hbox');hb.className='hbox on';
+  hb.innerHTML='💡 단서: '+(q.c||'단서가 없어요');
+}
+
+function pick(idx){
+  const q=gQ.qs[gQ.idx];
+  document.querySelectorAll('.obtn').forEach(b=>b.disabled=true);
+  const ok=idx===q.a;
+  const bs=document.querySelectorAll('.obtn');
+  bs[idx].classList.add(ok?'ok':'bad');
+  if(!ok){
+    bs[q.a].classList.add('rv');
+    if(!gC.wrongQ)gC.wrongQ=[];
+    if(!gC.wrongQ.some(w=>w.q===q.q)){
+      gC.wrongQ.push({...q,eraId:gQ.era.id,eraIc:gQ.era.ic,eraName:gQ.era.n});
+      if(gC.wrongQ.length>30)gC.wrongQ.shift();
+    }
+  }
+  const ds=document.querySelectorAll('.pdot');
+  if(ds[gQ.idx]){ds[gQ.idx].classList.remove('c');ds[gQ.idx].classList.add(ok?'r':'w');}
+  let pts=0;
+  if(ok){
+    const base={1:10,2:16,3:24}[gQ.diff]||10;
+    const pen=gC?.cl==='explorer'?0:(gHints[0]?3:0);
+    pts=Math.max(1,base-pen);
+    gQ.combo++;gQ.maxC=Math.max(gQ.maxC,gQ.combo);
+    const cm=gQ.combo>=5?(gC?.cl==='warrior'?1.9:1.5):gQ.combo>=3?(gC?.cl==='warrior'?1.4:1.2):1;
+    pts=Math.round(pts*cm);
+    if(gC?.cl==='artisan')pts=Math.round(pts*1.2);
+    gQ.sc++;
+  }else gQ.combo=0;
+  gQ.ptsE+=pts;gQ.res.push(ok);
+  if(pts>0)showPt(pts,bs[idx]);
+  if(gQ.combo>=2){const cb=document.getElementById('cbdg');cb.style.display='';cb.textContent='🔥 '+gQ.combo+'연속!';}
+  const fb=document.getElementById('fbox');
+  const eC=['🎉','✨','🌟','👏','🔥'][Math.floor(Math.random()*5)];
+  const eW=['😅','🤔','💪'][Math.floor(Math.random()*3)];
+  fb.className='fbox on '+(ok?'ok':'bad');
+  fb.innerHTML=`<strong>${ok?eC+' 정답!':eW+' 아쉬워요!'}</strong> ${q.ex}${pts>0?`<span style="font-weight:600;margin-left:4px">+${pts}💎${gQ.combo>=3?' 🔥':''}</span>`:''}`;
+  document.getElementById('nxBtn').style.display='block';
+  document.getElementById('nxBtn').textContent=gQ.idx<gQ.qs.length-1?'다음 문제 →':'결과 보기 🏁';
+}
+
+function showPt(pts,near){
+  const p=document.createElement('div');p.className='ptp';p.textContent='+'+pts+' 💎';
+  const nr=near?.getBoundingClientRect();
+  p.style.left=Math.round(nr?nr.left+nr.width/2-26:180)+'px';
+  p.style.top=Math.round(nr?nr.top-6:200)+'px';
+  document.body.appendChild(p);setTimeout(()=>p.remove(),950);
+}
+
+function nextQ(){gQ.idx++;if(gQ.idx>=gQ.qs.length)showResult();else renderQ();}
+
+function showResult(){
+  const tot=gQ.qs.length,sc=gQ.sc;
+  const st=sc===tot?3:sc>=Math.ceil(tot*.8)?2:sc>=Math.ceil(tot*.6)?1:0;
+  const pxp=gC.xp||0,plv=lvI(pxp);
+  gC.pts=(gC.pts||0)+gQ.ptsE;
+  gC.xp=(gC.xp||0)+Math.round(gQ.ptsE*.6);
+  if(!gC.eS)gC.eS={};
+  gC.eS[gQ.era.id]=Math.max(gC.eS[gQ.era.id]||0,st);
+  addHist(gQ.era.id,gQ.qs);
+
+  let stageMsg='',newTitle='',stagePass=false;
+  if(gQ.mode==='stage'){
+    const need=PSCORE[gQ.stage];
+    stagePass=sc>=need;
+    if(!gC.stages)gC.stages=initStages();
+    if(stagePass){
+      gC.stages[gQ.era.id][gQ.stage]='passed';
+      if(gQ.stage<3){
+        gC.stages[gQ.era.id][gQ.stage+1]='available';
+        stageMsg=`✅ 관문 ${gQ.stage} 통과! 관문 ${gQ.stage+1} ${SNAMES[gQ.stage+1]} 해금!`;
+      } else {
+        const ei=ERAS.findIndex(e=>e.id===gQ.era.id);
+        newTitle=ERA_TITLES[ei];
+        if(!gC.titles)gC.titles={};
+        gC.titles[gQ.era.id]=newTitle;
+        stageMsg=`👑 달인 통과! "${newTitle}" 칭호 획득!`;
+      }
+    } else {
+      gC.stages[gQ.era.id][gQ.stage]='failed';
+      stageMsg=`🔁 ${sc}/${tot}점 — 통과 조건: ${PSCORE[gQ.stage]}개 이상. 다시 도전!`;
+    }
+  }
+  sv();
+
+  const nlv=lvI(gC.xp),dlv=nlv>plv;
+  show('sc-result');
+  const ch={0:'📦',1:'🎁',2:'💝',3:'🏆'};
+  document.getElementById('rCh').textContent=ch[st]||'🎁';
+  document.getElementById('rEra').textContent=gQ.era.ic+' '+gQ.era.n+(gQ.mode==='stage'?` · 관문${gQ.stage} ${SNAMES[gQ.stage]}`:'');
+  document.getElementById('rSc').textContent=sc+' / '+tot;
+  document.getElementById('rSt').innerHTML='⭐'.repeat(st)+'☆'.repeat(3-st);
+  document.getElementById('rPts').textContent='+'+gQ.ptsE+' 💎 포인트!';
+
+  const rStage=document.getElementById('rStage');
+  if(stageMsg){rStage.style.display='block';rStage.innerHTML=`<div class="rsband ${stagePass?'pass':'fail'}">${stageMsg}</div>`;}
+  else rStage.style.display='none';
+
+  const ms=['다시 한번 도전해봐요! 💪','잘 했어요! 조금만 더! 🌱','멋져요! 거의 완벽! 📚','완벽해요! 역사 박사! 🏆'];
+  document.getElementById('rBk').innerHTML=`<div style="font-weight:600;color:#2C1810;margin-bottom:5px">${ms[st]}</div><div>📝 정답 ${sc}/${tot}개</div><div>🔥 최대 콤보 ${gQ.maxC}연속</div><div>💡 힌트 ${gQ.hN}회 사용</div><div>💎 누적 포인트 ${gC.pts}점</div>`;
+  document.getElementById('rtBtn').onclick=()=>{if(gQ.mode==='stage'){gStage=gQ.stage;startQuiz('stage');}else startQuiz('free');};
+
+  const rlv=document.getElementById('rLv');
+  if(dlv){const lv=LEVELS[nlv];rlv.style.display='block';rlv.innerHTML='⭐ 레벨 업! '+lv.ic+' '+lv.n+' 달성!';setTimeout(()=>{document.getElementById('lvTx').textContent=lv.ic+' '+lv.n+' 달성!';oo('lvOv');},600);}
+  else rlv.style.display='none';
+  checkBd(st,dlv,newTitle);
+}
+
+function checkBd(st,dlv,newTitle){
+  if(!gC.bd)gC.bd=[];const nb=[];
+  if(gQ.sc===gQ.qs.length&&!gC.bd.includes('pf_'+gQ.era.id)){gC.bd.push('pf_'+gQ.era.id);nb.push({ic:'💯',tx:gQ.era.n+' 완벽 달성!'});}
+  if(st===3&&!gC.bd.includes('s3_'+gQ.era.id)){gC.bd.push('s3_'+gQ.era.id);nb.push({ic:'🌟',tx:gQ.era.n+' 별 3개!'});}
+  if((gC.pts||0)>=200&&!gC.bd.includes('p200')){gC.bd.push('p200');nb.push({ic:'💎',tx:'200포인트 달성!'});}
+  if((gC.pts||0)>=600&&!gC.bd.includes('p600')){gC.bd.push('p600');nb.push({ic:'🔱',tx:'600포인트! 마스터!'});}
+  const rbd=document.getElementById('rBd');
+  if(nb.length>0){sv();rbd.style.display='block';rbd.innerHTML='🏅 새 뱃지!<br>'+nb.map(b=>`${b.ic} ${b.tx}`).join('<br>');
+    setTimeout(()=>{document.getElementById('bdIco').textContent=nb[0].ic;document.getElementById('bdTx').textContent=nb[0].tx;oo('bdOv');},dlv?2200:600);}
+  else rbd.style.display='none';
+  if(newTitle){sv();setTimeout(()=>{document.getElementById('titleTx').textContent=newTitle;oo('titleOv');},nb.length>0?3200:1200);}
+}
+
+function showWrong(){
+  const list=document.getElementById('wrongList');
+  const wq=gC?.wrongQ||[];
+  if(wq.length===0){list.innerHTML='<p style="text-align:center;padding:40px 20px;color:#8B7355;font-size:14px">아직 틀린 문제가 없어요!<br>열심히 풀고 있군요 👍</p>';}
+  else{
+    list.innerHTML='';
+    wq.slice().reverse().forEach(q=>{
+      const card=document.createElement('div');card.className='wncard';
+      card.innerHTML=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:14px">${q.eraIc||'📜'}</span><span style="font-size:11px;color:#8B7355">${q.eraName||''}</span></div>
+        <p style="font-size:14px;color:#2C1810;line-height:1.5;margin-bottom:5px">${q.q}</p>
+        <p style="font-size:12px;color:#4CAF50;font-weight:600">정답: ${q.o[q.a]}</p>
+        <p style="font-size:12px;color:#8B7355;margin-top:3px;line-height:1.5">${q.ex||''}</p>`;
+      list.appendChild(card);
+    });
+  }
+  show('sc-wrongnote');
+}
+
+function clearWrong(){
+  if(!confirm('오답 노트를 모두 삭제할까요?'))return;
+  gC.wrongQ=[];sv();
+  document.getElementById('wrongList').innerHTML='<p style="text-align:center;padding:40px 20px;color:#8B7355;font-size:14px">오답 노트가 비어있어요 👍</p>';
+}
+
+function show(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));const el=document.getElementById(id);if(el)el.classList.add('on');}
+function oo(id){document.getElementById(id)?.classList.add('on');}
+function co(id){document.getElementById(id)?.classList.remove('on');}
+init();
+</script>
+</body>
+</html>
